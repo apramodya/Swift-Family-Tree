@@ -64,21 +64,21 @@
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="70" translatesAutoresizingMaskIntoConstraints="NO" id="njA-9J-K0I">
-                                                        <rect key="frame" x="57" y="145" width="260" height="95"/>
+                                                        <rect key="frame" x="62" y="145" width="250" height="95"/>
                                                         <subviews>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nhz-El-Mxg" userLabel="Center Member Card" customClass="MemberCard" customModule="family_tree_rnd" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="0.0" width="80" height="95"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="70" height="95"/>
                                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <constraints>
-                                                                    <constraint firstAttribute="width" constant="80" id="BDL-lX-eLY"/>
+                                                                    <constraint firstAttribute="width" constant="70" id="BDL-lX-eLY"/>
                                                                     <constraint firstAttribute="height" constant="95" id="Q9J-tg-FTA"/>
                                                                 </constraints>
                                                             </view>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TCi-TJ-Nms" userLabel="Spouse Card" customClass="MemberCard" customModule="family_tree_rnd" customModuleProvider="target">
-                                                                <rect key="frame" x="180" y="0.0" width="80" height="95"/>
+                                                                <rect key="frame" x="180" y="0.0" width="70" height="95"/>
                                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <constraints>
-                                                                    <constraint firstAttribute="width" constant="80" id="920-0H-ec5"/>
+                                                                    <constraint firstAttribute="width" constant="70" id="920-0H-ec5"/>
                                                                     <constraint firstAttribute="height" constant="95" id="jsX-Kx-8HD"/>
                                                                 </constraints>
                                                             </view>
@@ -92,7 +92,7 @@
                                                     </stackView>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="Nhz-El-Mxg" firstAttribute="leading" secondItem="R8G-Nw-TQu" secondAttribute="leading" constant="40" id="7Eo-uh-z5J"/>
+                                                    <constraint firstItem="Nhz-El-Mxg" firstAttribute="leading" secondItem="R8G-Nw-TQu" secondAttribute="leading" constant="45" id="7Eo-uh-z5J"/>
                                                 </constraints>
                                             </stackView>
                                         </subviews>

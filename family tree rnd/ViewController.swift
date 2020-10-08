@@ -127,26 +127,37 @@ extension ViewController {
         self.zoomView.isUserInteractionEnabled = true
         
         if let _ = ViewModel.tree.father, let _ = ViewModel.tree.mother {
-            self.drawRelationshipPath(from: self.mainFatherCard, to: self.mainMotherCard, style: .BetweenCenterLevel)
+            drawRelationshipPath(from: mainFatherCard, to: [mainMotherCard], style: .BetweenCenterLevel)
+            drawRelationshipPath(from: mainCard, to: [mainFatherCard, mainMotherCard], style: .CenterLevelToUp)
         }
         if let _ = ViewModel.tree.spouse?.father, let _ = ViewModel.tree.spouse?.mother {
-            self.drawRelationshipPath(from: self.spouceFatherCard, to: self.spouceMotherCard, style: .BetweenCenterLevel)
+            drawRelationshipPath(from: spouceFatherCard, to: [spouceMotherCard], style: .BetweenCenterLevel)
+            drawRelationshipPath(from: spouseCard, to: [spouceFatherCard, spouceMotherCard], style: .CenterLevelToUp)
         }
         if let _ = ViewModel.tree.spouse {
-            self.drawRelationshipPath(from: self.mainCard, to: self.spouseCard, style: .BetweenCenterLevel)
+            drawRelationshipPath(from: mainCard, to: [spouseCard], style: .BetweenCenterLevel)
         }
         
         //create paths for childs
         for card in self.childrenStackView.arrangedSubviews {
-            self.drawRelationshipPath(from: self.mainCard, to: card, style: .CenterLevelToDown)
+            drawRelationshipPath(from: mainCard, to: [card], style: .CenterLevelToDown)
         }
     }
     
-    func drawRelationshipPath(from fromView: UIView, to toView: UIView, style: PathStyle) {
+    func drawRelationshipPath(from fromView: UIView, to toViews: [UIView], style: PathStyle) {
         let startPoint = fromView.superview!.convert(fromView.center, to: zoomView)
-        let endPoint = style == PathStyle.BetweenCenterLevel ?
-            toView.superview!.convert(toView.center, to: zoomView) :
-            CGPoint(x: (toView.center.x) , y: toView.center.y)
+        var endPoint: CGPoint!
+        
+        if toViews.count == 1, let toView = toViews.first {
+            endPoint = style == PathStyle.BetweenCenterLevel ?
+                toView.superview!.convert(toView.center, to: zoomView) :
+                CGPoint(x: (toView.center.x) , y: toView.center.y)
+        } else if toViews.count == 2 {
+            let toView1Point = toViews[0].superview!.convert(toViews[0].center, to: zoomView)
+            let toView2Point = toViews[1].superview!.convert(toViews[1].center, to: zoomView)
+            
+            endPoint = CGPoint(x: (toView1Point.x + toView2Point.x) / 2, y: toView1Point.y)
+        }
         
         let BezierPath = UIBezierPath()
         let shapeLayer = CAShapeLayer()
@@ -177,10 +188,6 @@ extension ViewController {
         animation.fromValue = 0.0
         animation.toValue = 1.0
         animation.duration = 1.5
-        
-        CATransaction.setCompletionBlock{
-            print("Animation completed")
-        }
         
         shapeLayer.add(animation, forKey: "myStroke")
         CATransaction.commit()
