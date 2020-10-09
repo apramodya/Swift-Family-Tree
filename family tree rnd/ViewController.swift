@@ -36,13 +36,12 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        scrollView.delegate = self
+        configUI()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        configUI()
         fetchMySelf()
     }
 }
@@ -54,6 +53,7 @@ extension ViewController {
             $0?.alpha = 0
         }
         childrenStackView.alpha = 0
+        scrollView.delegate = self
     }
     
     private func fetchMySelf() {
@@ -62,38 +62,23 @@ extension ViewController {
         UIView.animate(withDuration: 0.5) { [self] in
             mainCard.isHidden = false
             mainCard.alpha = 1
-            
-            if let _ = ViewModel.main.spouse {
-                spouseCard.isHidden = false
-                spouseCard.alpha = 1
-            }
-            
-            if let _ = ViewModel.main.father {
-                mainFatherCard.isHidden = false
-                mainFatherCard.alpha = 1
-            }
-            
-            if let _ = ViewModel.main.mother {
-                mainMotherCard.isHidden = false
-                mainMotherCard.alpha = 1
-            }
-            
-            if let _ = ViewModel.main.spouse?.father {
-                spouceFatherCard.isHidden = false
-                spouceFatherCard.alpha = 1
-            }
-            
-            if let _ = ViewModel.main.spouse?.father {
-                spouceMotherCard.isHidden = false
-                spouceMotherCard.alpha = 1
-            }
+            spouseCard.isHidden = ViewModel.main.spouse == nil
+            spouseCard.alpha = ViewModel.main.spouse != nil ? 1 : 0
+            mainFatherCard.isHidden = ViewModel.main.father == nil
+            mainFatherCard.alpha = ViewModel.main.father != nil ? 1 : 0
+            mainMotherCard.isHidden = ViewModel.main.mother == nil
+            mainMotherCard.alpha = ViewModel.main.mother != nil ? 1 : 0
+            spouceFatherCard.isHidden = ViewModel.main.spouse?.father == nil
+            spouceFatherCard.alpha = ViewModel.main.spouse?.father != nil ? 1 : 0
+            spouceMotherCard.isHidden = ViewModel.main.spouse?.father == nil
+            spouceMotherCard.alpha = ViewModel.main.spouse?.father != nil ? 1 : 0
         }
         
         fetchRelationsTree()
     }
     
     private func configCardWithMember(for card: MemberCard, with member: Member?) {
-        guard let _member = member else {
+        guard let member = member else {
             UIView.animate(withDuration: 0.5) {
                 card.isHidden = true
                 card.alpha = 0
@@ -101,8 +86,7 @@ extension ViewController {
             return
         }
         
-        card.cardPresentationStyle = .normal
-        card.config(member: _member)
+        card.config(with: member, using: .normal)
         
         card.tapActionHandler = {
         }
@@ -152,7 +136,9 @@ extension ViewController {
         }
     }
     
-    private func calculateStartPoint(_ fromViews: [UIView], _ startPoint: inout CGPoint?) {
+    private func calculateStartPoint(_ fromViews: [UIView]) -> CGPoint {
+        var startPoint: CGPoint!
+        
         if fromViews.count == 1, let fromView = fromViews.first {
             startPoint = fromView.superview!.convert(fromView.center, to: zoomView)
         } else if fromViews.count == 2 {
@@ -161,9 +147,13 @@ extension ViewController {
             
             startPoint = CGPoint(x: (fromView1Point.x + fromView2Point.x) / 2, y: fromView1Point.y)
         }
+        
+        return startPoint
     }
     
-    fileprivate func calculateEndPoint(_ toViews: [UIView], _ endPoint: inout CGPoint?) {
+    fileprivate func calculateEndPoint(_ toViews: [UIView]) -> CGPoint {
+        var endPoint: CGPoint!
+        
         if toViews.count == 1, let toView = toViews.first {
             endPoint = toView.superview!.convert(toView.center, to: zoomView)
         } else {
@@ -174,14 +164,16 @@ extension ViewController {
             
             endPoint = CGPoint(x: (toView1Point.x + toView2Point.x) / 2, y: toView1Point.y)
         }
+        
+        return endPoint
     }
     
     private func drawRelationshipPath(from fromViews: [UIView], to toViews: [UIView], style: PathStyle) {
         var startPoint: CGPoint!
         var endPoint: CGPoint!
         
-        calculateStartPoint(fromViews, &startPoint)
-        calculateEndPoint(toViews, &endPoint)
+        startPoint =  calculateStartPoint(fromViews)
+        endPoint = calculateEndPoint(toViews)
         
         // draw lines
         let bezierPath = UIBezierPath()
@@ -189,7 +181,21 @@ extension ViewController {
         
         bezierPath.move(to: CGPoint(x: startPoint.x, y: startPoint.y ))
         bezierPath.addLine(to: CGPoint(x: startPoint.x, y: startPoint.y ))
-        bezierPath.addLine(to: CGPoint(x: endPoint.x, y: endPoint.y ))
+        
+        switch style {
+        case .HorizontalLevel, .VerticalDownToUp:
+            bezierPath.addLine(to: CGPoint(x: endPoint.x, y: endPoint.y ))
+        case .VerticalUpToDown:
+            let centrePoint = CGPoint(x: endPoint.x, y: endPoint.y - 50)
+            bezierPath.addLine(to: centrePoint)
+            
+            toViews.forEach { toView in
+                let finalPoint = toView.superview!.convert(toView.center, to: zoomView)
+                bezierPath.move(to: centrePoint)
+                bezierPath.addLine(to: CGPoint(x: finalPoint.x, y: finalPoint.y - 50))
+                bezierPath.addLine(to: CGPoint(x: finalPoint.x, y: finalPoint.y))
+            }
+        }
         
         shapeLayer.lineDashPattern = [4,4]
         shapeLayer.lineWidth = 2

@@ -35,7 +35,7 @@ class MemberCard: UIView {
         cardPresentationStyle = presentationStyle
         nibSetup()
         setupUI()
-        config(member: member)
+        config(with: member, using: cardPresentationStyle)
     }
     
     // These are not been called. But keep
@@ -61,12 +61,13 @@ class MemberCard: UIView {
         addSubview(contentView)
     }
     
-    func config(member: Member) {
+    func config(with member: Member, using cardPresentationStyle: CardPresentationStyle) {
         self.member = member
-            
+        self.cardPresentationStyle = cardPresentationStyle
+        
         nameLbl.text = member.name ?? "N/A"
         
-        switch cardPresentationStyle! {
+        switch cardPresentationStyle {
         case .normal:
             return
         case .selected:
