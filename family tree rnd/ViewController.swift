@@ -127,34 +127,46 @@ extension ViewController {
         self.zoomView.isUserInteractionEnabled = true
         
         if let _ = ViewModel.tree.father, let _ = ViewModel.tree.mother {
-            drawRelationshipPath(from: mainFatherCard, to: [mainMotherCard], style: .BetweenCenterLevel)
-            drawRelationshipPath(from: mainCard, to: [mainFatherCard, mainMotherCard], style: .CenterLevelToUp)
-        }
-        if let _ = ViewModel.tree.spouse?.father, let _ = ViewModel.tree.spouse?.mother {
-            drawRelationshipPath(from: spouceFatherCard, to: [spouceMotherCard], style: .BetweenCenterLevel)
-            drawRelationshipPath(from: spouseCard, to: [spouceFatherCard, spouceMotherCard], style: .CenterLevelToUp)
-        }
-        if let _ = ViewModel.tree.spouse {
-            drawRelationshipPath(from: mainCard, to: [spouseCard], style: .BetweenCenterLevel)
+            drawRelationshipPath(from: [mainFatherCard], to: [mainMotherCard], style: .BetweenCenterLevel)
+            drawRelationshipPath(from: [mainCard], to: [mainFatherCard, mainMotherCard], style: .CenterLevelToUp)
         }
         
-        //create paths for childs
-        for card in self.childrenStackView.arrangedSubviews {
-            drawRelationshipPath(from: mainCard, to: [card], style: .CenterLevelToDown)
+        if let _ = ViewModel.tree.spouse?.father, let _ = ViewModel.tree.spouse?.mother {
+            drawRelationshipPath(from: [spouceFatherCard], to: [spouceMotherCard], style: .BetweenCenterLevel)
+            drawRelationshipPath(from: [spouseCard], to: [spouceFatherCard, spouceMotherCard], style: .CenterLevelToUp)
+        }
+        
+        if let _ = ViewModel.tree.spouse {
+            drawRelationshipPath(from: [mainCard], to: [spouseCard], style: .BetweenCenterLevel)
+        }
+        
+        if let _ = ViewModel.tree.children {
+            drawRelationshipPath(from: [mainCard, spouseCard], to: childrenStackView.arrangedSubviews, style: .CenterLevelToDown)
         }
     }
     
-    func drawRelationshipPath(from fromView: UIView, to toViews: [UIView], style: PathStyle) {
-        let startPoint = fromView.superview!.convert(fromView.center, to: zoomView)
+    func drawRelationshipPath(from fromViews: [UIView], to toViews: [UIView], style: PathStyle) {
+        var startPoint: CGPoint!
         var endPoint: CGPoint!
         
+        if fromViews.count == 1, let fromView = fromViews.first {
+            startPoint = fromView.superview!.convert(fromView.center, to: zoomView)
+        } else if fromViews.count == 2 {
+            let fromView1Point = fromViews[0].superview!.convert(fromViews[0].center, to: zoomView)
+            let fromView2Point = fromViews[1].superview!.convert(fromViews[1].center, to: zoomView)
+            
+            startPoint = CGPoint(x: (fromView1Point.x + fromView2Point.x) / 2, y: fromView1Point.y)
+        }
+        
         if toViews.count == 1, let toView = toViews.first {
-            endPoint = style == PathStyle.BetweenCenterLevel ?
+            endPoint = style == .BetweenCenterLevel ?
                 toView.superview!.convert(toView.center, to: zoomView) :
                 CGPoint(x: (toView.center.x) , y: toView.center.y)
-        } else if toViews.count == 2 {
-            let toView1Point = toViews[0].superview!.convert(toViews[0].center, to: zoomView)
-            let toView2Point = toViews[1].superview!.convert(toViews[1].center, to: zoomView)
+        } else {
+            let firstIndex = 0
+            let lastIndex = toViews.count - 1
+            let toView1Point = toViews[firstIndex].superview!.convert(toViews[firstIndex].center, to: zoomView)
+            let toView2Point = toViews[lastIndex].superview!.convert(toViews[lastIndex].center, to: zoomView)
             
             endPoint = CGPoint(x: (toView1Point.x + toView2Point.x) / 2, y: toView1Point.y)
         }
@@ -163,13 +175,7 @@ extension ViewController {
         let shapeLayer = CAShapeLayer()
         
         switch style {
-        case .CenterLevelToUp:
-            BezierPath.move(to: CGPoint(x: startPoint.x, y: startPoint.y ))
-            BezierPath.addLine(to: CGPoint(x: startPoint.x, y: startPoint.y ))
-            BezierPath.addLine(to: CGPoint(x: endPoint.x, y: endPoint.y ))
-        case .CenterLevelToDown:
-            return
-        case .BetweenCenterLevel:
+        case .CenterLevelToUp, .CenterLevelToDown, .BetweenCenterLevel:
             BezierPath.move(to: CGPoint(x: startPoint.x, y: startPoint.y ))
             BezierPath.addLine(to: CGPoint(x: startPoint.x, y: startPoint.y ))
             BezierPath.addLine(to: CGPoint(x: endPoint.x, y: endPoint.y ))
