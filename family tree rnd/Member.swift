@@ -7,41 +7,24 @@
 
 import Foundation
 
-
-
 public class Member: Codable {
-
-    public var _id: Int?
     public var name: String?
-    public var fatherId: Int?
-    public var motherId: Int?
-    public var spouseId: Int?
     public var father: Member?
     public var mother: Member?
     public var spouse: Member?
-
-    public init(_id: Int?, name: String?, fatherId: Int?, motherId: Int?, spouseId: Int?, father: Member?, mother: Member?, spouse: Member?) {
-        self._id = _id
+    
+    public init(name: String?, father: Member?, mother: Member?, spouse: Member?) {
         self.name = name
-        self.fatherId = fatherId
-        self.motherId = motherId
-        self.spouseId = spouseId
         self.father = father
         self.mother = mother
         self.spouse = spouse
     }
-
-    public enum CodingKeys: String, CodingKey { 
-        case _id = "id"
+    
+    public enum CodingKeys: String, CodingKey {
         case name
-        case fatherId = "father_id"
-        case motherId = "mother_id"
-        case spouseId = "spouse_id"
         case father
         case mother
         case spouse
     }
-
-
 }
 

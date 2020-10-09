@@ -8,48 +8,56 @@
 
 import UIKit
 
-enum CardPresentationStyle {
-    case normal
-    case selected
-}
-
-enum Gender: String{
-    case male = "Male"
-    case female = "Female"
-}
-
 class MemberCard: UIView {
+    
+    // MARK: IBOutlets
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var profilePhotoImgView: UIImageView!
     @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var dobLbl: UILabel!
     @IBOutlet weak var viewBottomBar: UIView!
     @IBOutlet weak var frontContainerView: UIView!
+    
+    // MARK: Properties
     var member: Member!
-    var cardPresentationStyle: CardPresentationStyle!
     var tapActionHandler: (() -> Void)?
     
-    init(frame: CGRect, member: Member, presentationStyle: CardPresentationStyle) {
+    // MARK: Life cycle
+    init(frame: CGRect, member: Member) {
         super.init(frame: frame)
+        
         self.member = member
-        cardPresentationStyle = presentationStyle
         nibSetup()
         setupUI()
-        config(with: member, using: cardPresentationStyle)
+        config(with: member)
     }
     
-    // These are not been called. But keep
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         nibSetup()
         setupUI()
     }
     
-    // These are not been called. But keep
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        
         nibSetup()
         setupUI()
+    }
+    
+    // MARK: IBActions
+    @IBAction func btnCardPressed(_ sender: UIButton) {
+        if let handler = tapActionHandler {
+            handler()
+        }
+    }
+}
+
+extension MemberCard {
+    func config(with member: Member) {
+        self.member = member
+        nameLbl.text = member.name ?? "N/A"
     }
     
     private func nibSetup() {
@@ -61,19 +69,6 @@ class MemberCard: UIView {
         addSubview(contentView)
     }
     
-    func config(with member: Member, using cardPresentationStyle: CardPresentationStyle) {
-        self.member = member
-        self.cardPresentationStyle = cardPresentationStyle
-        
-        nameLbl.text = member.name ?? "N/A"
-        
-        switch cardPresentationStyle {
-        case .normal:
-            return
-        case .selected:
-            viewBottomBar.backgroundColor = .white
-        }
-    }
     private func loadViewFromNib() -> UIView {
         let bundle = Bundle(for: type(of: self))
         let nib = UINib(nibName: String(describing: type(of: self)), bundle: bundle)
@@ -81,7 +76,7 @@ class MemberCard: UIView {
         return nibView
     }
     
-    func setupUI() {
+    private func setupUI() {
         profilePhotoImgView.layer.cornerRadius = profilePhotoImgView.frame.width / 2
         profilePhotoImgView.clipsToBounds = true
         
@@ -99,12 +94,4 @@ class MemberCard: UIView {
         layer.shadowRadius = 2.0
         layer.shadowOffset = CGSize(width: 0.0, height: 3.0)
     }
-    
-    
-    @IBAction func btnCardPressed(_ sender: UIButton) {
-        if let handler = tapActionHandler {
-            handler()
-        }
-    }
-    
 }

@@ -86,7 +86,7 @@ extension ViewController {
             return
         }
         
-        card.config(with: member, using: .normal)
+        card.config(with: member)
         
         card.tapActionHandler = {
         }
@@ -151,7 +151,7 @@ extension ViewController {
         return startPoint
     }
     
-    fileprivate func calculateEndPoint(_ toViews: [UIView]) -> CGPoint {
+    private func calculateEndPoint(_ toViews: [UIView]) -> CGPoint {
         var endPoint: CGPoint!
         
         if toViews.count == 1, let toView = toViews.first {
@@ -216,12 +216,14 @@ extension ViewController {
     }
 }
 
+// MARK: UIScrollViewDelegate
 extension ViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return zoomView
     }
 }
 
+// MARK: CGPoint
 extension CGPoint {
     func distance(to point: CGPoint) -> CGFloat {
         return sqrt(pow(x - point.x, 2) + pow(y - point.y, 2))
