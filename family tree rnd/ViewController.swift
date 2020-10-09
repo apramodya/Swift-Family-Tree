@@ -8,13 +8,14 @@
 import UIKit
 
 enum PathStyle {
-    case CenterLevelToUp
-    case CenterLevelToDown
-    case BetweenCenterLevel
+    case VerticalDownToUp
+    case VerticalUpToDown
+    case HorizontalLevel
 }
 
 class ViewController: UIViewController {
     
+    // MARK: IBOutlets
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var mainCard: MemberCard!
     @IBOutlet weak var spouseCard: MemberCard!
@@ -28,63 +29,70 @@ class ViewController: UIViewController {
     @IBOutlet weak var centerCoupleStackView: UIStackView!
     @IBOutlet weak var childrenStackView: UIStackView!
     
+    // MARK: Properties
     var vm = ViewModel()
     
+    // MARK: Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         scrollView.delegate = self
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         configUI()
         fetchMySelf()
     }
 }
 
 extension ViewController {
-    func configUI() {
+    private func configUI() {
         [mainCard, mainFatherCard, mainMotherCard, spouseCard, spouceFatherCard, spouceMotherCard].forEach {
             $0?.isHidden = true
             $0?.alpha = 0
         }
-        self.childrenStackView.alpha = 0
+        childrenStackView.alpha = 0
     }
     
-    func fetchMySelf() {
-        configCardWithMember(for: self.mainCard, with: ViewModel.main, isCenterMember: true)
+    private func fetchMySelf() {
+        configCardWithMember(for: mainCard, with: ViewModel.main)
         
-        UIView.animate(withDuration: 0.5) { [unowned self] in
-            self.mainCard.isHidden = false
-            self.mainCard.alpha = 1
+        UIView.animate(withDuration: 0.5) { [self] in
+            mainCard.isHidden = false
+            mainCard.alpha = 1
             
             if let _ = ViewModel.main.spouse {
-                self.spouseCard.isHidden = false
-                self.spouseCard.alpha = 1
+                spouseCard.isHidden = false
+                spouseCard.alpha = 1
             }
+            
             if let _ = ViewModel.main.father {
-                self.mainFatherCard.isHidden = false
-                self.mainFatherCard.alpha = 1
+                mainFatherCard.isHidden = false
+                mainFatherCard.alpha = 1
             }
+            
             if let _ = ViewModel.main.mother {
-                self.mainMotherCard.isHidden = false
-                self.mainMotherCard.alpha = 1
+                mainMotherCard.isHidden = false
+                mainMotherCard.alpha = 1
             }
+            
             if let _ = ViewModel.main.spouse?.father {
-                self.spouceFatherCard.isHidden = false
-                self.spouceFatherCard.alpha = 1
+                spouceFatherCard.isHidden = false
+                spouceFatherCard.alpha = 1
             }
+            
             if let _ = ViewModel.main.spouse?.father {
-                self.spouceMotherCard.isHidden = false
-                self.spouceMotherCard.alpha = 1
+                spouceMotherCard.isHidden = false
+                spouceMotherCard.alpha = 1
             }
         }
+        
         fetchRelationsTree()
     }
     
-    func configCardWithMember(for card: MemberCard, with member: Member?, isCenterMember: Bool = false) {
+    private func configCardWithMember(for card: MemberCard, with member: Member?) {
         guard let _member = member else {
             UIView.animate(withDuration: 0.5) {
                 card.isHidden = true
@@ -92,21 +100,20 @@ extension ViewController {
             }
             return
         }
+        
         card.cardPresentationStyle = .normal
         card.config(member: _member)
-        if isCenterMember {
-        }
+        
         card.tapActionHandler = {
-            
         }
     }
     
-    func fetchRelationsTree() {
-        self.configCardWithMember(for: self.spouseCard, with: ViewModel.tree.spouse)
-        self.configCardWithMember(for: self.mainFatherCard, with: ViewModel.tree.father)
-        self.configCardWithMember(for: self.mainMotherCard, with: ViewModel.tree.mother)
-        self.configCardWithMember(for: self.spouceMotherCard, with: ViewModel.tree.spouse?.mother)
-        self.configCardWithMember(for: self.spouceFatherCard, with: ViewModel.tree.spouse?.father)
+    private func fetchRelationsTree() {
+        configCardWithMember(for: spouseCard, with: ViewModel.tree.spouse)
+        configCardWithMember(for: mainFatherCard, with: ViewModel.tree.father)
+        configCardWithMember(for: mainMotherCard, with: ViewModel.tree.mother)
+        configCardWithMember(for: spouceMotherCard, with: ViewModel.tree.spouse?.mother)
+        configCardWithMember(for: spouceFatherCard, with: ViewModel.tree.spouse?.father)
         
         //create cards for children
         if let _children = ViewModel.tree.children {
@@ -114,9 +121,9 @@ extension ViewController {
                 let card = MemberCard(frame: CGRect(x: 0, y: 0, width: 70, height: 95))
                 card.heightAnchor.constraint(equalToConstant: 95).isActive = true
                 card.widthAnchor.constraint(equalToConstant: 70).isActive = true
-                self.configCardWithMember(for: card, with: child)
-                self.childrenStackView.spacing = 50
-                self.childrenStackView.addArrangedSubview(card)
+                configCardWithMember(for: card, with: child)
+                childrenStackView.spacing = 50
+                childrenStackView.addArrangedSubview(card)
             }
             //display children cards with fade animation
             UIView.animate(withDuration: 0.7, animations: {
@@ -124,31 +131,28 @@ extension ViewController {
             })
         }
         
-        self.zoomView.isUserInteractionEnabled = true
+        zoomView.isUserInteractionEnabled = true
         
         if let _ = ViewModel.tree.father, let _ = ViewModel.tree.mother {
-            drawRelationshipPath(from: [mainFatherCard], to: [mainMotherCard], style: .BetweenCenterLevel)
-            drawRelationshipPath(from: [mainCard], to: [mainFatherCard, mainMotherCard], style: .CenterLevelToUp)
+            drawRelationshipPath(from: [mainFatherCard], to: [mainMotherCard], style: .HorizontalLevel)
+            drawRelationshipPath(from: [mainCard], to: [mainFatherCard, mainMotherCard], style: .VerticalDownToUp)
         }
         
         if let _ = ViewModel.tree.spouse?.father, let _ = ViewModel.tree.spouse?.mother {
-            drawRelationshipPath(from: [spouceFatherCard], to: [spouceMotherCard], style: .BetweenCenterLevel)
-            drawRelationshipPath(from: [spouseCard], to: [spouceFatherCard, spouceMotherCard], style: .CenterLevelToUp)
+            drawRelationshipPath(from: [spouceFatherCard], to: [spouceMotherCard], style: .HorizontalLevel)
+            drawRelationshipPath(from: [spouseCard], to: [spouceFatherCard, spouceMotherCard], style: .VerticalDownToUp)
         }
         
         if let _ = ViewModel.tree.spouse {
-            drawRelationshipPath(from: [mainCard], to: [spouseCard], style: .BetweenCenterLevel)
+            drawRelationshipPath(from: [mainCard], to: [spouseCard], style: .HorizontalLevel)
         }
         
         if let _ = ViewModel.tree.children {
-            drawRelationshipPath(from: [mainCard, spouseCard], to: childrenStackView.arrangedSubviews, style: .CenterLevelToDown)
+            drawRelationshipPath(from: [mainCard, spouseCard], to: childrenStackView.arrangedSubviews, style: .VerticalUpToDown)
         }
     }
     
-    func drawRelationshipPath(from fromViews: [UIView], to toViews: [UIView], style: PathStyle) {
-        var startPoint: CGPoint!
-        var endPoint: CGPoint!
-        
+    private func calculateStartPoint(_ fromViews: [UIView], _ startPoint: inout CGPoint?) {
         if fromViews.count == 1, let fromView = fromViews.first {
             startPoint = fromView.superview!.convert(fromView.center, to: zoomView)
         } else if fromViews.count == 2 {
@@ -157,11 +161,11 @@ extension ViewController {
             
             startPoint = CGPoint(x: (fromView1Point.x + fromView2Point.x) / 2, y: fromView1Point.y)
         }
-        
+    }
+    
+    fileprivate func calculateEndPoint(_ toViews: [UIView], _ endPoint: inout CGPoint?) {
         if toViews.count == 1, let toView = toViews.first {
-            endPoint = style == .BetweenCenterLevel ?
-                toView.superview!.convert(toView.center, to: zoomView) :
-                CGPoint(x: (toView.center.x) , y: toView.center.y)
+            endPoint = toView.superview!.convert(toView.center, to: zoomView)
         } else {
             let firstIndex = 0
             let lastIndex = toViews.count - 1
@@ -170,21 +174,27 @@ extension ViewController {
             
             endPoint = CGPoint(x: (toView1Point.x + toView2Point.x) / 2, y: toView1Point.y)
         }
+    }
+    
+    private func drawRelationshipPath(from fromViews: [UIView], to toViews: [UIView], style: PathStyle) {
+        var startPoint: CGPoint!
+        var endPoint: CGPoint!
         
-        let BezierPath = UIBezierPath()
+        calculateStartPoint(fromViews, &startPoint)
+        calculateEndPoint(toViews, &endPoint)
+        
+        // draw lines
+        let bezierPath = UIBezierPath()
         let shapeLayer = CAShapeLayer()
         
-        switch style {
-        case .CenterLevelToUp, .CenterLevelToDown, .BetweenCenterLevel:
-            BezierPath.move(to: CGPoint(x: startPoint.x, y: startPoint.y ))
-            BezierPath.addLine(to: CGPoint(x: startPoint.x, y: startPoint.y ))
-            BezierPath.addLine(to: CGPoint(x: endPoint.x, y: endPoint.y ))
-        }
+        bezierPath.move(to: CGPoint(x: startPoint.x, y: startPoint.y ))
+        bezierPath.addLine(to: CGPoint(x: startPoint.x, y: startPoint.y ))
+        bezierPath.addLine(to: CGPoint(x: endPoint.x, y: endPoint.y ))
         
         shapeLayer.lineDashPattern = [4,4]
         shapeLayer.lineWidth = 2
         shapeLayer.strokeColor = UIColor.green.cgColor
-        shapeLayer.path = BezierPath.cgPath
+        shapeLayer.path = bezierPath.cgPath
         shapeLayer.fillColor = UIColor.clear.cgColor
         shapeLayer.lineJoin = .bevel
         
@@ -197,12 +207,7 @@ extension ViewController {
         
         shapeLayer.add(animation, forKey: "myStroke")
         CATransaction.commit()
-        
     }
-}
-
-extension ViewController {
-    
 }
 
 extension ViewController: UIScrollViewDelegate {
