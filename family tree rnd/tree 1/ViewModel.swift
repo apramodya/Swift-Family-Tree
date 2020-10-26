@@ -23,5 +23,5 @@ class ViewModel {
     static var son2: Member = Member(name: "Son 2", father: main, mother: spouce, spouse: nil)
     static var son3: Member = Member(name: "Son 3", father: main, mother: spouce, spouse: nil)
     
-    static var tree: Tree = Tree(_id: nil, father: mainFather, mother: mainMother, spouse: spouce, children: [son1, son2, son3])
+    static var tree: Tree = Tree(_id: nil, father: mainFather, mother: mainMother, spouse: spouce, children: [son1, son2, son3, son1])
 }

@@ -60,6 +60,11 @@ extension MemberCard {
         nameLbl.text = member.name ?? "N/A"
     }
     
+    func config(with member: FamilyMember) {
+        nameLbl.text = member.name
+        dobLbl.text = member.birthDate
+    }
+    
     private func nibSetup() {
         backgroundColor = .clear
         contentView = loadViewFromNib()

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="4F1-zU-aEE">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -143,6 +143,80 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="139" y="89"/>
+        </scene>
+        <!--TreeVC-->
+        <scene sceneID="MrV-0v-V5c">
+            <objects>
+                <viewController id="4F1-zU-aEE" customClass="TreeVC" customModule="family_tree_rnd" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="uTk-QK-AZC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" maximumZoomScale="5" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HsP-PX-JSi">
+                                <rect key="frame" x="0.0" y="44" width="414" height="778"/>
+                                <subviews>
+                                    <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0iO-WS-YfQ" userLabel="Zoom View">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="778"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="50" translatesAutoresizingMaskIntoConstraints="NO" id="qoC-Ph-CXL">
+                                                <rect key="frame" x="20" y="341.5" width="374" height="95"/>
+                                                <subviews>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="70" translatesAutoresizingMaskIntoConstraints="NO" id="ONj-sj-zf9">
+                                                        <rect key="frame" x="152" y="0.0" width="70" height="95"/>
+                                                        <subviews>
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7VO-ug-H0e" userLabel="Center Member Card" customClass="MemberCard" customModule="family_tree_rnd" customModuleProvider="target">
+                                                                <rect key="frame" x="0.0" y="0.0" width="70" height="95"/>
+                                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="95" id="DLW-Pl-b1E"/>
+                                                                    <constraint firstAttribute="width" constant="70" id="yRM-yN-Za9"/>
+                                                                </constraints>
+                                                            </view>
+                                                        </subviews>
+                                                    </stackView>
+                                                </subviews>
+                                            </stackView>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="qoC-Ph-CXL" secondAttribute="trailing" constant="20" id="7Ow-uq-OJz"/>
+                                            <constraint firstItem="qoC-Ph-CXL" firstAttribute="centerX" secondItem="0iO-WS-YfQ" secondAttribute="centerX" id="8r4-Hk-hhm"/>
+                                            <constraint firstItem="qoC-Ph-CXL" firstAttribute="leading" secondItem="0iO-WS-YfQ" secondAttribute="leading" constant="20" id="K2k-Ii-4EZ"/>
+                                            <constraint firstItem="qoC-Ph-CXL" firstAttribute="centerY" secondItem="0iO-WS-YfQ" secondAttribute="centerY" id="nQ6-Dk-fPF"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" red="0.94509803920000002" green="0.94509803920000002" blue="0.94509803920000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstItem="0iO-WS-YfQ" firstAttribute="height" secondItem="HsP-PX-JSi" secondAttribute="height" priority="250" id="2sB-Ct-Kge"/>
+                                    <constraint firstAttribute="trailing" secondItem="0iO-WS-YfQ" secondAttribute="trailing" id="6tZ-H3-8o5"/>
+                                    <constraint firstAttribute="bottom" secondItem="0iO-WS-YfQ" secondAttribute="bottom" id="IdY-Nc-nZ3"/>
+                                    <constraint firstItem="0iO-WS-YfQ" firstAttribute="top" secondItem="HsP-PX-JSi" secondAttribute="top" id="Nov-wh-7vT"/>
+                                    <constraint firstItem="0iO-WS-YfQ" firstAttribute="width" secondItem="HsP-PX-JSi" secondAttribute="width" priority="250" id="aw0-RJ-HKl"/>
+                                    <constraint firstItem="0iO-WS-YfQ" firstAttribute="leading" secondItem="HsP-PX-JSi" secondAttribute="leading" id="igT-1l-G7G"/>
+                                </constraints>
+                            </scrollView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="oRh-or-HZp"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="oRh-or-HZp" firstAttribute="trailing" secondItem="HsP-PX-JSi" secondAttribute="trailing" id="4zC-mD-TzQ"/>
+                            <constraint firstItem="HsP-PX-JSi" firstAttribute="top" secondItem="oRh-or-HZp" secondAttribute="top" id="FTW-pr-OSx"/>
+                            <constraint firstItem="oRh-or-HZp" firstAttribute="bottom" secondItem="HsP-PX-JSi" secondAttribute="bottom" constant="40" id="kOM-Ca-ZmE"/>
+                            <constraint firstItem="HsP-PX-JSi" firstAttribute="leading" secondItem="uTk-QK-AZC" secondAttribute="leading" id="mSm-WZ-Nq6"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="centerStackView" destination="ONj-sj-zf9" id="8qp-K6-eAm"/>
+                        <outlet property="containerStackView" destination="qoC-Ph-CXL" id="BdR-Fh-PMl"/>
+                        <outlet property="mainCard" destination="7VO-ug-H0e" id="caK-K9-oOd"/>
+                        <outlet property="scrollView" destination="HsP-PX-JSi" id="HnJ-UP-N1V"/>
+                        <outlet property="zoomView" destination="0iO-WS-YfQ" id="p8w-tG-leN"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9nR-pJ-Nu1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="919" y="88"/>
         </scene>
     </scenes>
     <resources>

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32384A5F2541294800A5DF61 /* TreeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32384A5E2541294800A5DF61 /* TreeVC.swift */; };
+		32384A66254139D900A5DF61 /* FamilyMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32384A65254139D900A5DF61 /* FamilyMember.swift */; };
 		3257787E252D5A2600EC1F74 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3257787D252D5A2600EC1F74 /* AppDelegate.swift */; };
 		32577880252D5A2600EC1F74 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3257787F252D5A2600EC1F74 /* SceneDelegate.swift */; };
 		32577882252D5A2600EC1F74 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32577881252D5A2600EC1F74 /* ViewController.swift */; };
@@ -21,6 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		32384A5E2541294800A5DF61 /* TreeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeVC.swift; sourceTree = "<group>"; };
+		32384A65254139D900A5DF61 /* FamilyMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyMember.swift; sourceTree = "<group>"; };
 		3257787A252D5A2600EC1F74 /* family tree rnd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "family tree rnd.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3257787D252D5A2600EC1F74 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3257787F252D5A2600EC1F74 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -47,6 +51,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		32384A612541397A00A5DF61 /* tree 1 */ = {
+			isa = PBXGroup;
+			children = (
+				325778B0252D801100EC1F74 /* MemberCard.swift */,
+				325778B1252D801100EC1F74 /* MemberCard.xib */,
+				325778B5252D803900EC1F74 /* Member.swift */,
+				325778B8252D80DC00EC1F74 /* Tree.swift */,
+				32577881252D5A2600EC1F74 /* ViewController.swift */,
+				325778BC252D824700EC1F74 /* ViewModel.swift */,
+			);
+			path = "tree 1";
+			sourceTree = "<group>";
+		};
+		32384A62254139A000A5DF61 /* app */ = {
+			isa = PBXGroup;
+			children = (
+				3257787D252D5A2600EC1F74 /* AppDelegate.swift */,
+				3257787F252D5A2600EC1F74 /* SceneDelegate.swift */,
+				32577886252D5A2700EC1F74 /* Assets.xcassets */,
+			);
+			path = app;
+			sourceTree = "<group>";
+		};
+		32384A64254139BA00A5DF61 /* tree 2 */ = {
+			isa = PBXGroup;
+			children = (
+				32384A5E2541294800A5DF61 /* TreeVC.swift */,
+				32384A65254139D900A5DF61 /* FamilyMember.swift */,
+			);
+			path = "tree 2";
+			sourceTree = "<group>";
+		};
 		32577871252D5A2600EC1F74 = {
 			isa = PBXGroup;
 			children = (
@@ -66,16 +102,10 @@
 		3257787C252D5A2600EC1F74 /* family tree rnd */ = {
 			isa = PBXGroup;
 			children = (
-				325778B0252D801100EC1F74 /* MemberCard.swift */,
-				325778B1252D801100EC1F74 /* MemberCard.xib */,
-				325778B5252D803900EC1F74 /* Member.swift */,
-				325778B8252D80DC00EC1F74 /* Tree.swift */,
-				3257787D252D5A2600EC1F74 /* AppDelegate.swift */,
-				3257787F252D5A2600EC1F74 /* SceneDelegate.swift */,
-				32577881252D5A2600EC1F74 /* ViewController.swift */,
-				325778BC252D824700EC1F74 /* ViewModel.swift */,
+				32384A64254139BA00A5DF61 /* tree 2 */,
+				32384A62254139A000A5DF61 /* app */,
+				32384A612541397A00A5DF61 /* tree 1 */,
 				32577883252D5A2600EC1F74 /* Main.storyboard */,
-				32577886252D5A2700EC1F74 /* Assets.xcassets */,
 				32577888252D5A2700EC1F74 /* LaunchScreen.storyboard */,
 				3257788B252D5A2700EC1F74 /* Info.plist */,
 			);
@@ -153,6 +183,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32384A5F2541294800A5DF61 /* TreeVC.swift in Sources */,
+				32384A66254139D900A5DF61 /* FamilyMember.swift in Sources */,
 				32577882252D5A2600EC1F74 /* ViewController.swift in Sources */,
 				325778B2252D801100EC1F74 /* MemberCard.swift in Sources */,
 				3257787E252D5A2600EC1F74 /* AppDelegate.swift in Sources */,
