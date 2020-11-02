@@ -8,7 +8,7 @@
 import UIKit
 
 class TreeVC: UIViewController {
-
+    
     var mainMember: FamilyMember?
     
     @IBOutlet weak var scrollView: UIScrollView!
@@ -19,7 +19,7 @@ class TreeVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         scrollView.delegate = self
         scrollView.minimumZoomScale = 1.0;
         scrollView.maximumZoomScale = 3.0
@@ -36,15 +36,15 @@ class TreeVC: UIViewController {
     
     private func makeFamily() -> FamilyMember {
         let person = FamilyMember(name: "Person", birthDate: "1995/06/14")
-        let personMother = FamilyMember(name: "Person mother")
-        let personFather = FamilyMember(name: "Person father")
+        let personMother = FamilyMember(name: "Mother")
+        let personFather = FamilyMember(name: "Father")
         
-        let grandMotherF = FamilyMember(name: "Father's Grandama")
-        let grandFatherF = FamilyMember(name: "Father's Grandapa")
+        let grandMotherF = FamilyMember(name: "Father's mom")
+        let grandFatherF = FamilyMember(name: "Father's dad")
         personFather.addParent(mother: grandMotherF, father: grandFatherF)
         
-        let grandMotherM = FamilyMember(name: "Mother's Grandama")
-        let grandFatherM = FamilyMember(name: "Mother's Grandapa")
+        let grandMotherM = FamilyMember(name: "Mother's mom")
+        let grandFatherM = FamilyMember(name: "Mother's dad")
         personMother.addParent(mother: grandMotherM, father: grandFatherM)
         
         let personSibling1 = FamilyMember(name: "Sibling 1")
@@ -97,26 +97,36 @@ extension TreeVC {
         populateSiblings(for: member)
     }
     
-    private func populateParents(for member: FamilyMember) {
+    private func populateParents(for member: FamilyMember, view: UIStackView? = nil) {
         if member.haveParents() {
-            let parentsStackView = createStackView()
-            containerStackView.insertArrangedSubview(parentsStackView, at: 0)
+            let parentsSV = createStackView(.horizontal)
+            
+            if let view = view {
+                view.insertArrangedSubview(parentsSV, at: 0)
+            } else {
+                containerStackView.insertArrangedSubview(parentsSV, at: 0)
+            }
             
             if let father = member.getFather() {
+                let fatherSV = createStackView(.vertical)
                 let card = createCard(for: father)
-                parentsStackView.addArrangedSubview(card)
+                fatherSV.addArrangedSubview(card)
+                
+                parentsSV.addArrangedSubview(fatherSV)
                 
                 if father.haveParents() {
-                    populateParents(for: father)
+                    populateParents(for: father, view: fatherSV)
                 }
             }
             
             if let mother = member.getMother() {
+                let motherSV = createStackView(.vertical)
                 let card = createCard(for: mother)
-                parentsStackView.addArrangedSubview(card)
+                motherSV.addArrangedSubview(card)
+                parentsSV.addArrangedSubview(motherSV)
                 
                 if mother.haveParents() {
-                    populateParents(for: mother)
+                    populateParents(for: mother, view: motherSV)
                 }
             }
         }
@@ -135,7 +145,7 @@ extension TreeVC {
     
     private func populateChildren(for member: FamilyMember) {
         if member.childrenCount() > 0 {
-            let childrenStackView = createStackView()
+            let childrenStackView = createStackView(.horizontal)
             containerStackView.addArrangedSubview(childrenStackView)
             
             let children = member.getChildren().compactMap{ $0 }
@@ -149,7 +159,7 @@ extension TreeVC {
     
     private func populateSiblings(for member: FamilyMember) {
         if member.getSiblingsCount() > 0 {
-            let siblingsStackView = createStackView()
+            let siblingsStackView = createStackView(.horizontal)
             centerStackView.addArrangedSubview(siblingsStackView)
             
             let siblings = member.getSiblings().compactMap{ $0 }
@@ -170,13 +180,12 @@ extension TreeVC {
         return card
     }
     
-    private func createStackView() -> UIStackView {
-        let stackView   = UIStackView()
-        stackView.axis  = .horizontal
-        stackView.distribution  = .equalSpacing
-        stackView.alignment = .fill
+    private func createStackView(_ axis: NSLayoutConstraint.Axis) -> UIStackView {
+        let stackView = UIStackView()
+        stackView.axis = axis
+        stackView.distribution = .fill
+        stackView.alignment = axis == .vertical ? .center : .bottom
         stackView.spacing = 20
-        stackView.backgroundColor = .blue
         
         return stackView
     }
@@ -184,6 +193,38 @@ extension TreeVC {
 
 extension TreeVC {
     private func drawRelationshipPath(from fromViews: [UIView], to toViews: [UIView], style: PathStyle) {
+        func calculateStartPoint(_ fromViews: [UIView]) -> CGPoint {
+            var startPoint: CGPoint!
+            
+            if fromViews.count == 1, let fromView = fromViews.first {
+                startPoint = fromView.superview!.convert(fromView.center, to: zoomView)
+            } else if fromViews.count == 2 {
+                let fromView1Point = fromViews[0].superview!.convert(fromViews[0].center, to: zoomView)
+                let fromView2Point = fromViews[1].superview!.convert(fromViews[1].center, to: zoomView)
+                
+                startPoint = CGPoint(x: (fromView1Point.x + fromView2Point.x) / 2, y: fromView1Point.y)
+            }
+            
+            return startPoint
+        }
+        
+        func calculateEndPoint(_ toViews: [UIView]) -> CGPoint {
+            var endPoint: CGPoint!
+            
+            if toViews.count == 1, let toView = toViews.first {
+                endPoint = toView.superview!.convert(toView.center, to: zoomView)
+            } else {
+                let firstIndex = 0
+                let lastIndex = toViews.count - 1
+                let toView1Point = toViews[firstIndex].superview!.convert(toViews[firstIndex].center, to: zoomView)
+                let toView2Point = toViews[lastIndex].superview!.convert(toViews[lastIndex].center, to: zoomView)
+                
+                endPoint = CGPoint(x: (toView1Point.x + toView2Point.x) / 2, y: toView1Point.y)
+            }
+            
+            return endPoint
+        }
+        
         var startPoint: CGPoint!
         var endPoint: CGPoint!
         
@@ -228,38 +269,6 @@ extension TreeVC {
         
         shapeLayer.add(animation, forKey: "myStroke")
         CATransaction.commit()
-    }
-    
-    private func calculateStartPoint(_ fromViews: [UIView]) -> CGPoint {
-        var startPoint: CGPoint!
-        
-        if fromViews.count == 1, let fromView = fromViews.first {
-            startPoint = fromView.superview!.convert(fromView.center, to: zoomView)
-        } else if fromViews.count == 2 {
-            let fromView1Point = fromViews[0].superview!.convert(fromViews[0].center, to: zoomView)
-            let fromView2Point = fromViews[1].superview!.convert(fromViews[1].center, to: zoomView)
-            
-            startPoint = CGPoint(x: (fromView1Point.x + fromView2Point.x) / 2, y: fromView1Point.y)
-        }
-        
-        return startPoint
-    }
-    
-    private func calculateEndPoint(_ toViews: [UIView]) -> CGPoint {
-        var endPoint: CGPoint!
-        
-        if toViews.count == 1, let toView = toViews.first {
-            endPoint = toView.superview!.convert(toView.center, to: zoomView)
-        } else {
-            let firstIndex = 0
-            let lastIndex = toViews.count - 1
-            let toView1Point = toViews[firstIndex].superview!.convert(toViews[firstIndex].center, to: zoomView)
-            let toView2Point = toViews[lastIndex].superview!.convert(toViews[lastIndex].center, to: zoomView)
-            
-            endPoint = CGPoint(x: (toView1Point.x + toView2Point.x) / 2, y: toView1Point.y)
-        }
-        
-        return endPoint
     }
 }
 
