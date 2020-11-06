@@ -270,6 +270,20 @@ extension TreeVC {
         shapeLayer.add(animation, forKey: "myStroke")
         CATransaction.commit()
     }
+    
+    private func makeDot(startPoint: CGPoint, color: UIColor) -> CAShapeLayer {
+        let xCoord = startPoint.x
+        let yCoord = startPoint.y
+
+        let xx = CGRect(x: xCoord, y: yCoord, width: 8, height: 8)
+        let dotPath = UIBezierPath(ovalIn: xx)
+
+        let layer = CAShapeLayer()
+        layer.path = dotPath.cgPath
+        layer.strokeColor = color.cgColor
+        
+        return layer
+    }
 }
 
 // MARK: UIScrollViewDelegate
